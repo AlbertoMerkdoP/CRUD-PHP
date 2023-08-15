@@ -14,7 +14,6 @@
 
     $conexion = new Database;  
     $result = $conexion->CrearEstudiante($identificacion,$fnacimiento,$nombres,$apellidos,$email,$telefono,$direccion);
-
     header("Location: ".ROOT."modulos/estudiantes/estudiantes.php?mensaje=".$result);
 
 ?>

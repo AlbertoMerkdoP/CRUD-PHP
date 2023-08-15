@@ -1,54 +1,54 @@
-<?php 
+<?php
     include_once("../../config/DBConect.php");
     include_once("../../config/Config.php");
 
     session_start();
     $role = $_SESSION['sess_userrole'];
 
-    if(!isset($_SESSION['sess_username'])){
-        header("Location: ".ROOT."index.php?mensaje=2");
-    }else{
-        if($role!="2" && $role!="1"){
-            session_destroy();
-            header("Location: ".ROOT."index.php?mensaje=4");
-        }
+    if (!isset($_SESSION['sess_username'])) {
+        header("Location: " . ROOT . "index.php?mensaje=2");
+    } elseif ($role != $roles['docente'] && $role != $roles['administrador']) {
+        session_destroy();
+        header("Location: " . ROOT . "index.php?mensaje=4");
     }
 
-    $id = $_GET['id'];
+    $identificacion = $_GET['id'];
 
-    $conexion = new Database;  
-    $result = $conexion->editEstudiante($id);
+    $conexion = new Database;
+    $result = $conexion->editEstudiante($identificacion);
 
-    $estud_id = $estud_identificacion =  $estud_fnacimiento = $estud_nombres = $estud_apellidos = $estud_email = $estud_telefono =  $estud_direccion ="";
-    foreach($result->fetchAll(PDO::FETCH_OBJ) as $r){
-        $estud_id = $r->id;
+    $estud_identificacion = $estud_fnacimiento = $estud_nombres = $estud_apellidos = $estud_email = $estud_telefono = $estud_direccion = "";
+    foreach ($result->fetchAll(PDO::FETCH_OBJ) as $r) {
         $estud_identificacion = $r->identificacion;
         $estud_fnacimiento = $r->fnacimiento;
         $estud_nombres = $r->nombres;
         $estud_apellidos = $r->apellidos;
-        $estud_email  = $r->email;
+        $estud_email = $r->email;
         $estud_telefono = $r->telefono;
+        $estud_direccion = $r->direccion;
     }
-    
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Editar estudiante</title>
     <link href="../../bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css">
     <link href="../../css/style.css" rel="stylesheet" type="text/css">
 </head>
+
 <body>
 
-    <?php 
-        if($role=="1"){
-            include_once('../../administrador/menu.php'); 
-        }else if($role=="2"){
-            include_once('../../profesores/menu.php'); 
-        }
+    <?php
+    if ($role == $roles['administrador']) {
+        include_once('../../administrador/menu.php');
+    } else if ($role == $roles['docente']) {
+        include_once('../../profesores/menu.php');
+    }
     ?>
 
     <div class="container">
@@ -60,53 +60,61 @@
                         <a href="<?= ROOT ?>modulos/estudiantes/estudiantes.php" class="btn btn-primary">Regresar</a>
                     </div>
                     <div class="card-body">
-                        <form action="update.php" method="POST" name="forrol">
+                        <form action="update.php?id=<?= $estud_identificacion ?>" method="POST" name="forrol">
 
                             <div class="form-group">
-                                <label for="identificacion">Identificacion</label>
-                                <input type="text" class="form-control" id="identificacion" name="identificacion" value="<?= $estud_identificacion ?>" required>
+                                <label for="identificacion">Identificación</label>
+                                <input type="number" class="form-control" id="identificacion" name="identificacion"
+                                    value="<?= $estud_identificacion ?>" required>
                                 <input type="hidden" class="form-control" id="id" name="id" value="<?= $estud_id ?>">
                             </div>
 
                             <div class="form-group">
                                 <label for="fnacimiento">Fecha de Nacimiento</label>
-                                <input type="text" class="form-control" id="fnacimiento" name="fnacimiento" required>
+                                <input type="text" class="form-control" id="fnacimiento" name="fnacimiento"
+                                    value="<?= $estud_fnacimiento ?>">
                             </div>
 
                             <div class="form-group">
                                 <label for="nombres">Nombres</label>
-                                <input type="text" class="form-control" id="nombres" name="nombres" value="<?= $estud_nombres ?>" required>
+                                <input type="text" class="form-control" id="nombres" name="nombres"
+                                    value="<?= $estud_nombres ?>" required>
                             </div>
 
                             <div class="form-group">
                                 <label for="apellidos">Apellidos</label>
-                                <input type="text" class="form-control" id="apellidos" name="apellidos" value="<?= $estud_apellidos ?>" required>
+                                <input type="text" class="form-control" id="apellidos" name="apellidos"
+                                    value="<?= $estud_apellidos ?>" required>
                             </div>
 
                             <div class="form-group">
                                 <label for="email">Email</label>
-                                <input type="text" class="form-control" id="email" name="email" value="<?= $estud_email ?>" required>
+                                <input type="email" class="form-control" id="email" name="email"
+                                    value="<?= $estud_email ?>" required>
                             </div>
 
                             <div class="form-group">
                                 <label for="telefono">Telefono</label>
-                                <input type="text" class="form-control" id="telefono" name="telefono" value="<?= $estud_telefono ?>" required>
+                                <input type="number" class="form-control" id="telefono" name="telefono"
+                                    value="<?= $estud_telefono ?>" required>
                             </div>
 
                             <div class="form-group">
-                                <label for="direccion">Direccion</label>
-                                <input type="text" class="form-control" id="direccion" name="direccion" required>
+                                <label for="direccion">Dirección</label>
+                                <input type="text" class="form-control" id="direccion" name="direccion"
+                                    value="<?= $estud_direccion ?>">
                             </div>
-                            
+
                             <button type="submit" class="btn btn-primary">Actualizar</button>
-                        </form>     
+                        </form>
                     </div>
                 </div>
             </div>
         </div>
-    <div>
+        <div>
 
-    <script src="../../js/javascript.js" ></script>
-    <script src="../../bootstrap/js/bootstrap.bundle.min.js" ></script>
+            <script src="../../js/javascript.js"></script>
+            <script src="../../bootstrap/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>

@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.1
+-- version 5.2.0
 -- https://www.phpmyadmin.net/
 --
--- Servidor: 127.0.0.1
--- Tiempo de generación: 12-08-2023 a las 02:03:07
--- Versión del servidor: 10.4.28-MariaDB
--- Versión de PHP: 8.0.28
+-- Servidor: localhost
+-- Tiempo de generación: 15-08-2023 a las 05:50:39
+-- Versión del servidor: 10.4.27-MariaDB
+-- Versión de PHP: 8.1.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -28,14 +28,13 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `estudiantes` (
+  `identificacion` int(12) NOT NULL,
   `nombres` varchar(25) NOT NULL,
   `apellidos` varchar(25) NOT NULL,
-  `email` varchar(25) NOT NULL,
-  `telefono` int(15) NOT NULL,
-  `identificacion` char(11) NOT NULL,
-  `fnacimiento` datetime DEFAULT NULL,
-  `direccion` varchar(11) NOT NULL,
-  `id` int(11) NOT NULL
+  `fnacimiento` date DEFAULT NULL,
+  `email` varchar(30) DEFAULT NULL,
+  `direccion` varchar(30) DEFAULT NULL,
+  `telefono` varchar(20) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -45,11 +44,23 @@ CREATE TABLE `estudiantes` (
 --
 
 CREATE TABLE `materias` (
-  `nombre` varchar(11) NOT NULL,
-  `horario` time NOT NULL,
-  `docente` varchar(11) NOT NULL,
-  `descripcion` longtext DEFAULT NULL,
-  `id` int(11) NOT NULL
+  `id` int(10) NOT NULL,
+  `nombre` varchar(25) NOT NULL,
+  `horario` varchar(25) NOT NULL,
+  `docente` varchar(25) NOT NULL,
+  `descripcion` varchar(100) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `matriculas`
+--
+
+CREATE TABLE `matriculas` (
+  `id` int(10) NOT NULL,
+  `materiaId` int(11) NOT NULL,
+  `estudiante` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -60,8 +71,17 @@ CREATE TABLE `materias` (
 
 CREATE TABLE `roles` (
   `id` int(10) NOT NULL,
-  `nombre` varchar(50) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  `nombre` varchar(25) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `roles`
+--
+
+INSERT INTO `roles` (`id`, `nombre`) VALUES
+(1, 'Administrador'),
+(2, 'Docente'),
+(3, 'Estudiante');
 
 -- --------------------------------------------------------
 
@@ -71,13 +91,13 @@ CREATE TABLE `roles` (
 
 CREATE TABLE `users` (
   `id` int(10) NOT NULL,
-  `username` varchar(191) NOT NULL,
-  `password` varchar(191) NOT NULL,
-  `nombres` varchar(191) NOT NULL,
-  `apellidos` varchar(191) NOT NULL,
-  `identificacion` varchar(191) NOT NULL,
-  `role` int(10) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  `nombres` varchar(25) NOT NULL,
+  `apellidos` varchar(25) NOT NULL,
+  `identificacion` int(12) NOT NULL,
+  `username` varchar(30) NOT NULL,
+  `password` varchar(50) NOT NULL,
+  `role` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Índices para tablas volcadas
@@ -96,6 +116,14 @@ ALTER TABLE `materias`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indices de la tabla `matriculas`
+--
+ALTER TABLE `matriculas`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `materia_id_fk` (`materiaId`),
+  ADD KEY `estudiante_fk` (`estudiante`);
+
+--
 -- Indices de la tabla `roles`
 --
 ALTER TABLE `roles`
@@ -105,23 +133,55 @@ ALTER TABLE `roles`
 -- Indices de la tabla `users`
 --
 ALTER TABLE `users`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `identificacion` (`identificacion`),
+  ADD UNIQUE KEY `username` (`username`),
+  ADD KEY `role_fk` (`role`);
 
 --
 -- AUTO_INCREMENT de las tablas volcadas
 --
 
 --
+-- AUTO_INCREMENT de la tabla `materias`
+--
+ALTER TABLE `materias`
+  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT de la tabla `matriculas`
+--
+ALTER TABLE `matriculas`
+  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT de la tabla `roles`
 --
 ALTER TABLE `roles`
-  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de la tabla `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- Restricciones para tablas volcadas
+--
+
+--
+-- Filtros para la tabla `matriculas`
+--
+ALTER TABLE `matriculas`
+  ADD CONSTRAINT `estudiante_fk` FOREIGN KEY (`estudiante`) REFERENCES `estudiantes` (`identificacion`),
+  ADD CONSTRAINT `materia_id_fk` FOREIGN KEY (`materiaId`) REFERENCES `materias` (`id`);
+
+--
+-- Filtros para la tabla `users`
+--
+ALTER TABLE `users`
+  ADD CONSTRAINT `role_fk` FOREIGN KEY (`role`) REFERENCES `roles` (`id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

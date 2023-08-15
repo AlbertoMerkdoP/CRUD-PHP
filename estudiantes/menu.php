@@ -23,7 +23,7 @@
                     <?php echo $_SESSION['sess_usernom'].' '.$_SESSION['sess_userapel'];?>
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <a class="dropdown-item" href="<?= ROOT ?>config/logout.php">Cerrar sesión</a>
+                    <a class="dropdown-item" href="<?= ROOT ?>config/Logout.php">Cerrar sesión</a>
                 </div>
             </li>
         </ul>

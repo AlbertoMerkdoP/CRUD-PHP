@@ -6,3 +6,10 @@
 body {
    background-color: rgb(137, 88, 149);
 }
+
+#button {
+    font-weight: bolder;
+    font-size: 20px;
+    border-radius: 15px;
+    text-transform: uppercase;
+}
